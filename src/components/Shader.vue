@@ -1,7 +1,7 @@
 <template>
-  <div id="app">
-    <gl-canvas @update="glslUpdate">
-      <gl-program name="main" :code="shaderCode">
+  <div>
+    <gl-canvas @update="glslUpdate" :height="windowHeight">
+      <gl-program name="main" :code="shaderCode" >
         <gl-float name="u_light" :value="light" />
       </gl-program>
     </gl-canvas>
@@ -142,17 +142,17 @@ const shader=`
     vec4 m = max(0.6 - vec4(dot(x0,x0), dot(x1,x1), dot(x2,x2), dot(x3,x3)), 0.0);
     m = m * m;
     return 42.0 * dot( m*m, vec4( dot(p0,x0), dot(p1,x1),
-                                  dot(p2,x2), dot(p3,x3) ) );
+      dot(p2,x2), dot(p3,x3) ) );
     }
 
   void main() {
       vec2 uv = gl_FragCoord.xy/iResolution.xy;
 
-      float n = snoise(vec3(uv.x, uv.y, iTime));
+      float n = snoise(vec3(uv.x, uv.y, iTime * 0.2));
 
-      float col = 0.1 * n + 0.9;
+      float col = 0.3 * n + 0.7;
 
-      vec3 color = hsl2rgb(1.0, 0.0, col);
+      vec3 color = hsl2rgb(col, 0.3, 0.8);
       gl_FragColor = vec4(vec3(color), 1);
   }
 `;
@@ -162,6 +162,8 @@ export default Vue.extend({
     return{
       light: 0,
       shaderCode: shader,
+      windowHeight: window.innerHeight,
+      windowWidth: window.innerWidth
     }
   },
   methods:{
