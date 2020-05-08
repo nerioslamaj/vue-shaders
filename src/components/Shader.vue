@@ -162,8 +162,7 @@ export default Vue.extend({
     return{
       light: 0,
       shaderCode: shader,
-      windowHeight: window.innerHeight,
-      windowWidth: window.innerWidth
+      windowHeight: window.innerHeight
     }
   },
   methods:{
