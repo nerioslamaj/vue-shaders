@@ -48,36 +48,28 @@ const shader=`
               f2 = hsl.z + hsl.y - hsl.y * hsl.z;
               
           float f1 = 2.0 * hsl.z - f2;
-          
           rgb.r = hue2rgb(f1, f2, hsl.x + (1.0/3.0));
           rgb.g = hue2rgb(f1, f2, hsl.x);
           rgb.b = hue2rgb(f1, f2, hsl.x - (1.0/3.0));
       }   
       return rgb;
   }
-  
   vec3 hsl2rgb(float h, float s, float l) {
       return hsl2rgb(vec3(h, s, l));
   }
-
-
   vec3 mod289(vec3 x) {
     return x - floor(x * (1.0 / 289.0)) * 289.0;
   }
-  
   vec4 mod289(vec4 x) {
     return x - floor(x * (1.0 / 289.0)) * 289.0;
   }
-  
   vec4 permute(vec4 x) {
         return mod289(((x*34.0)+1.0)*x);
   }
-  
   vec4 taylorInvSqrt(vec4 r)
   {
     return 1.79284291400159 - 0.85373472095314 * r;
   }
-  
   float snoise(vec3 v)
     {
     const vec2  C = vec2(1.0/6.0, 1.0/3.0) ;
@@ -155,21 +147,25 @@ const shader=`
 
   void main() {
       vec2 uv = gl_FragCoord.xy/iResolution.xy;
-      vec3 col = 0.5 + 0.5*cos(iTime+uv.xyx+vec3(0,2,4));
-      gl_FragColor = vec4(col + iMouse[0],1.0);
+
+      float n = snoise(vec3(uv.x, uv.y, iTime));
+
+      float col = 0.1 * n + 0.9;
+
+      vec3 color = hsl2rgb(1.0, 0.0, col);
+      gl_FragColor = vec4(vec3(color), 1);
   }
 `;
 
 export default Vue.extend({
   data(){
     return{
-      light:0,
-      shaderCode:shader,
+      light: 0,
+      shaderCode: shader,
     }
   },
   methods:{
     glslUpdate(tickData){
-      console.log(tickData);
       this.light = (Math.sin(tickData.iTime)+1)/2;
     }
   }
